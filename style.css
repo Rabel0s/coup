@@ -1,0 +1,77 @@
+body, html {
+    margin: 0;
+    overflow: hidden;
+}
+body {
+    height: 100vh;
+    display: grid;
+    background: linear-gradient(45deg, #121358 0%, #2F578A 50%, #36ADA3 100%);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    justify-content: center;
+    align-items: center;
+}
+
+.escolhas {
+    display: grid;
+    background-color: rgb(117, 14, 14);
+    width: 20vw;
+    padding: 20px;
+    border-radius: 10px;
+    gap: 5px;
+}
+
+#start {
+    color: rgb(255, 255, 255);
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 200px);
+    grid-template-rows: repeat(2, auto);
+    justify-content: center;
+    gap: 50px;
+    border-radius: 10px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 150px;
+    aspect-ratio: 1 / 1;
+    background-color: rgb(5, 31, 56);
+    border-radius: 10px;
+    border: solid 1px rgb(116, 83, 1);
+    color: rgb(208, 210, 212);
+    padding: 10px;
+}
+
+#imgCard {
+    display: flex;
+}
+
+.escondido {
+    display: none;
+}
+
+img {
+    width: 50px;
+    border-radius: 5px;
+}
+
+.imgCard {
+    display: flex;
+    gap: 20px;
+}
+
+select {
+    border-radius: 10px;
+}
+
+button {
+    border-radius: 5px;
+    border: green;
+}
+
