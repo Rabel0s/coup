@@ -1,25 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&display=swap');
 body, html {
     margin: 0;
     overflow: hidden;
+    text-align: center;
 }
+
+h1 {
+    font-size: 130px;
+    letter-spacing: 8px;
+}
+
+.linha {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+}
+
+.linha::before, .linha::after {
+    content: "";
+    width: 60px;
+    border-bottom: 2px solid #ffffff;
+    background: #3B82F6;
+    box-shadow: 0 0 10px #3B82F6;
+}
+
 body {
     height: 100vh;
-    display: grid;
-    background: linear-gradient(45deg, #121358 0%, #2F578A 50%, #36ADA3 100%);
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center center;
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(circle, #071B4A, #020F2F);
+    color: #F8FAFC;
+    font-family: 'Bebas Neue', sans-serif;
     justify-content: center;
     align-items: center;
 }
 
+.action {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+    position: absolute;
+    background-color: rgba(33, 29, 83, 0.445);
+}
+
+.painel-acoes {
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(to top, #071B4A, #020F2F);
+    color: #F8FAFC;
+    width: 40vw;
+    padding: 20px;
+    border-radius: 20px;
+    border: 2px solid #1E3A8A;
+    gap: 20px;
+    box-shadow: 0 0 30px rgba(0,102,255,0.3);
+    margin-bottom: 20px;
+}
+
 .escolhas {
-    display: grid;
-    background-color: rgb(117, 14, 14);
-    width: 20vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 35vw;
     padding: 20px;
     border-radius: 10px;
     gap: 5px;
+    background: rgba(5, 20, 54, 0.8);
+    border: 2px solid #1E3A8A;
+    border-radius: 24px;
+    box-shadow: 0 0 30px rgba(0,102,255,0.3);
 }
 
 #start {
@@ -35,6 +88,59 @@ body {
     border-radius: 10px;
 }
 
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  background-image: none;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid #160a86;
+  border-radius: 0;
+  -webkit-border-radius: 0 !important;
+  text-align: center !important;
+  text-align-last: center !important;
+  padding: 3px 30px;
+  font-size: 16px;
+  outline: none;
+  margin-bottom: 3px;
+}
+
+input {
+    border-radius: 5px;
+    border: solid black 1px;
+}
+
+input[type="radio"] {
+    opacity: 0;
+}
+
+.ult {
+    border-radius: 10px;
+    background: transparent;
+    border: 2px solid #0066FF;
+    height: 40px;
+}
+
+.ult:has(input[type="radio"]:checked) {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+#ultDiv {
+    display: flex;
+    justify-content: center;
+    margin: 3px;
+    gap: 5px;
+}
+
+input:focus {
+    background-color: #b1bbca;
+}
+
 .card {
     display: flex;
     flex-direction: column;
@@ -43,17 +149,14 @@ body {
     aspect-ratio: 1 / 1;
     background-color: rgb(5, 31, 56);
     border-radius: 10px;
-    border: solid 1px rgb(116, 83, 1);
+    border: solid 1px rgb(4, 4, 43);
     color: rgb(208, 210, 212);
     padding: 10px;
+    box-shadow: 0 0 30px rgba(0,102,255,0.3);
 }
 
 #imgCard {
     display: flex;
-}
-
-.escondido {
-    display: none;
 }
 
 img {
@@ -68,10 +171,58 @@ img {
 
 select {
     border-radius: 10px;
+    color: #F8FAFC;
+}
+
+option {
+    background-color: rgb(5, 1, 22);
 }
 
 button {
-    border-radius: 5px;
-    border: green;
+    border-radius: 10px;
+    width: 150px;
+    height: 40px;
+    background: transparent;
+    border: 2px solid #0066FF;
+    color: #F8FAFC;
+    transition: 0.3s;
 }
 
+button:hover {
+    background: #0066FF;
+    box-shadow: 0 0 20px #3B82F6;
+    transform: scale(1.05)
+}
+
+#acoesCard, #acoesGerais {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+h3 {
+    font-size: 18px;
+    text-align: center;
+}
+
+.escondido {
+    display: none;
+}
+
+#nome {
+    text-align: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+}
+
+.exit{
+    border-color: #EF4444;
+    color: #EF4444;
+}
+
+.exit:hover{
+    background: #EF4444;
+    color: white;
+    box-shadow: 0 0 20px #c76868;
+}

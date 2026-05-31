@@ -9,6 +9,9 @@ let cards = {
 let nplayers = 2;
 let playersEl = document.getElementById("Nplayers");
 const nome = document.getElementById("nome");
+let linhaEl = document.querySelector(".linha");
+let buttonRodada = document.querySelector(".rodada");
+
 playersEl.addEventListener("input", () => {
     nome.innerHTML = "";
     nplayers = Number(playersEl.value);
@@ -22,6 +25,8 @@ playersEl.addEventListener("input", () => {
 let escolhasContainer = document.querySelector(".escolhas");
 let gameTable = document.querySelector(".container");
 let deck = [];
+
+let statusPlayers = [];
 
 function embaralhar() {
     for(let k = deck.length - 1; k > 0; k--) {
@@ -48,19 +53,59 @@ function startGame() {
         embaralhar();
         let carta2 = deck.pop();
 
+        let nick = nomeInputs[i].value !== ""? nomeInputs[i].value : `Player ${i + 1}`;
+
+        statusPlayers.push({
+            nome: nick,
+            moedas: 2,
+            cartas: [carta1, carta2],
+            vivo: true
+        });
+
         htmlGerado += `
-        <div class='card'>
-            <h3>${nomeInputs[i].value}</h3>
-            <div class='imgCard'>
-                <img src='${cards[carta1]}'>
-                <img src='${cards[carta2]}'>
+            <div class='card'>
+                <h3 class='nick'>${nick}</h3>
+                <div class='imgCard'>
+                    <img src='${cards[carta1]}'>
+                    <img src='${cards[carta2]}'>
+                </div>
+                <h3>R$ 2</h3>
             </div>
-        </div>
-        `;
+        `.addEventListener("click",);
         
 
     }
+    
     escolhasContainer.classList.add("escondido");
+    linhaEl.classList.add("escondido");
     gameTable.classList.remove("escondido");
+    buttonRodada.classList.remove("escondido");
     gameTable.innerHTML = htmlGerado;
+    const playerIni = document.querySelectorAll(".card .nick")[0].textContent;
+    buttonRodada.innerHTML = `Vez de ${playerIni}`;
+}
+
+let nplayerAtual = 0;
+let action = document.querySelector(".action");
+
+function duque() {
+    if(statusPlayers[nplayerAtual].moedas >= 10) {
+        //golpeDeEstado();
+        return;
+    }
+    statusPlayers[nplayerAtual].moedas += 3;
+    console.log(statusPlayers[nplayerAtual].moedas);
+}
+
+function rodada() {
+    const playerAtual = document.querySelectorAll(".card")[nplayerAtual];
+    action.classList.remove("escondido")
+
+    nplayerAtual = nplayerAtual + 1 >= nplayers? 0 : nplayerAtual + 1;
+    console.log(playerAtual);
+}
+
+let configs = document.getElementById("config");
+function toggleConfig() {
+    configs.classList.toggle("escondido");
 }

@@ -7,25 +7,67 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="linha"><h1>Coup</h1></div>
     <div class="escolhas">
-        <label for="Nplayers">Numero de jogadores:</label>
-        <select name="" id="Nplayers">
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-        </select>
-        <div id="nome">
-            <input id="names" type='text' placeholder="Nome 1:">
-            <input id="names" type='text' placeholder="Nome 2:">
+        <button onclick="startGame()">Começar Jogo</button>    
+        <div id="config" class="escondido">
+            <label for="Nplayers">Numero de jogadores:</label>
+            <select name="" id="Nplayers">
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+            <div id="nome">
+                <input id="names" type='text' placeholder="Nome 1:">
+                <input id="names" type='text' placeholder="Nome 2:">
+            </div>
+
+            <div id="ultDiv">
+                <label class="ult" for="semULT">
+                    <h3>Sem Ultimate</h3>
+                    <input id="semULT" type="radio" checked name="ultimate">
+                </label>
+                <label class="ult" for="comULT">
+                    <h3>Com Ultimate</h3>
+                    <input id="comULT" type="radio" name="ultimate">
+                </label>
+            </div>
         </div>
-        <button onclick="startGame()">Começar Jogo</button>
+        <button onclick="toggleConfig()">Configurações</button>
+        
+        <a href="https://www.google.com">
+            <button class="exit">Sair</button>
+        </a>
     </div>
 
     <div class="container escondido">
 
     </div>
+
+    <button class="rodada escondido" onclick="duque()"></button>
+
+    <div class="action escondido">
+        <div class="painel-acoes">
+            <div id="acoesCard">
+                <h3>Ações de Personagem</h3>
+                <button onclick="acao('taxar')">Taxar</button>
+                <button onclick="acao('assassinar')">Assassinar</button>
+                <button onclick="acao('trocar')">Trocar</button>
+                <button onclick="acao('roubar')">Roubar</button>
+            </div>
+
+            <div id="acoesGerais">
+                <h3>Ações Gerais</h3>
+                <button onclick="acao('renda')">Renda</button>
+                <button onclick="acao('ajuda_externa')">Ajuda Externa</button>
+                <button onclick="acao('golpe')">Golpe</button>
+            </div>
+        </div>
+    </div>
+
+    
     
     <script src="script.js"></script>
 </body>
