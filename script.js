@@ -71,9 +71,7 @@ function startGame() {
                 </div>
                 <h3>R$ 2</h3>
             </div>
-        `.addEventListener("click",);
-        
-
+        `;
     }
     
     escolhasContainer.classList.add("escondido");
@@ -88,13 +86,52 @@ function startGame() {
 let nplayerAtual = 0;
 let action = document.querySelector(".action");
 
+let alvo = null;
+
+function renderGame(playerAtual) {
+
+    let htmlGerado = "";
+    gameTable.innerHTML = "";
+
+    statusPlayers.forEach((player, index) => {
+
+        htmlGerado += `
+        <div class='${player !== playerAtual? "card" : "outros"}' onclick="clicouPlayer(${index})">
+
+            <h3 class='nick'>${player.nome}</h3>
+
+            <div class='imgCard'>
+                <img src='${cards[player.cartas[0]]}'>
+                <img src='${cards[player.cartas[1]]}'>
+            </div>
+
+            <h3>R$ ${player.moedas}</h3>
+
+        </div>
+        `
+    });
+
+    gameTable.innerHTML = htmlGerado;
+}
+
 function duque() {
     if(statusPlayers[nplayerAtual].moedas >= 10) {
-        //golpeDeEstado();
+        renderGame(statusPlayers[nplayerAtual])
+        golpeDeEstado();
         return;
     }
     statusPlayers[nplayerAtual].moedas += 3;
     console.log(statusPlayers[nplayerAtual].moedas);
+}
+
+let escolherCartas = document.querySelector(".chooseCard");
+function golpeDeEstado() {
+    gameTable.innerHTML = ""
+    let htmlGerado =  "";
+    player.cartas.forEach(carta => {
+        htmlGerado = `<img src='${carta}'></img>`
+    });
+    escolherCartas.innerHTML = htmlGerado;
 }
 
 function rodada() {
@@ -108,4 +145,15 @@ function rodada() {
 let configs = document.getElementById("config");
 function toggleConfig() {
     configs.classList.toggle("escondido");
+}
+
+function acao(action) {
+    switch(action) {
+        case action:
+            duque();
+            break;
+    
+        default:
+            break;
+    }
 }

@@ -44,7 +44,6 @@ body {
     justify-content: end;
     align-items: center;
     position: absolute;
-    background-color: rgba(33, 29, 83, 0.445);
 }
 
 .painel-acoes {
@@ -225,4 +224,23 @@ h3 {
     background: #EF4444;
     color: white;
     box-shadow: 0 0 20px #c76868;
+}
+
+.outros {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 150px;
+    aspect-ratio: 1 / 1;
+    background-color: rgb(5, 31, 56);
+    border-radius: 10px;
+    border: solid 1px rgb(4, 4, 43);
+    color: rgb(208, 210, 212);
+    padding: 10px;
+    box-shadow: 0 0 30px rgba(0,102,255,0.3);
+
+    transform: scale(1.05);
+    background-color: #1E3A8A;
+
+    border-radius: 10px;
 }
