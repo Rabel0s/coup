@@ -86,7 +86,6 @@ function startGame() {
 let nplayerAtual = 0;
 let action = document.querySelector(".action");
 
-let alvo = null;
 
 function renderGame(playerAtual) {
 
@@ -94,15 +93,18 @@ function renderGame(playerAtual) {
     gameTable.innerHTML = "";
 
     statusPlayers.forEach((player, index) => {
-
+        let imgs = "";
+        player.cartas.forEach(carta => {
+            imgs += `<img src='${cards[carta]}'></img>`;
+        }) 
         htmlGerado += `
-        <div class='${player !== playerAtual? "card" : "outros"}' onclick="clicouPlayer(${index})">
+        <div class='${player === playerAtual? "card" : "outros"}' ${player !== playerAtual ? `onclick="clicouPlayer(${index})"` : ""}
+        data-player="${index}">
 
             <h3 class='nick'>${player.nome}</h3>
 
             <div class='imgCard'>
-                <img src='${cards[player.cartas[0]]}'>
-                <img src='${cards[player.cartas[1]]}'>
+                ${imgs}
             </div>
 
             <h3>R$ ${player.moedas}</h3>
@@ -112,6 +114,25 @@ function renderGame(playerAtual) {
     });
 
     gameTable.innerHTML = htmlGerado;
+
+    for(let i = 0; i < nplayers; i++) {
+        if(!statusPlayers[i].vivo) {
+            document.querySelector(`[data-player="${i}"]`).classList.add("morto");
+            document.querySelector(`[data-player="${i}"]`).querySelectorAll("h3")[1].innerHTML = "Morto"
+        }
+    }
+}
+
+let alvo = null;
+function clicouPlayer(index) {
+    console.log(index);
+    document.querySelectorAll(".outros").forEach(card => {
+        card.classList.remove("marcado");
+    });
+
+    alvo = index;
+
+    document.querySelector(`[data-player="${index}"]`).classList.add("marcado");
 }
 
 function duque() {
@@ -121,25 +142,72 @@ function duque() {
         return;
     }
     statusPlayers[nplayerAtual].moedas += 3;
+    passarRodada();
+
     console.log(statusPlayers[nplayerAtual].moedas);
 }
 
 let escolherCartas = document.querySelector(".chooseCard");
-function golpeDeEstado() {
-    gameTable.innerHTML = ""
-    let htmlGerado =  "";
-    player.cartas.forEach(carta => {
-        htmlGerado = `<img src='${carta}'></img>`
+
+function colocarCartasNaTela() {
+    let htmlGerado = "";
+    let i = 0;
+    statusPlayers[alvo].cartas.forEach(carta => {
+        htmlGerado += `
+            <img src='${cards[carta]}' onclick="matar(${i})">
+        `
+        i++;
     });
     escolherCartas.innerHTML = htmlGerado;
 }
 
+function matar(indiceCarta) {
+    statusPlayers[alvo].cartas.splice(indiceCarta, 1);
+
+    if(statusPlayers[alvo].cartas.length <= 0) {
+        statusPlayers[alvo].vivo = false;
+    }
+
+    escolherCartas.innerHTML = "";
+
+    alvo = null;
+
+    passarRodada();
+}
+
+function golpeDeEstado() {
+    if(statusPlayers[nplayerAtual].moedas < 7) {
+        alert("Moedas insuficientes, faça outra ação");
+        return;
+    }
+
+    if(alvo === null) {
+        alert("Escolha um alvo");
+        return;
+    }
+
+    statusPlayers[nplayerAtual].moedas -= 7;
+    renderGame(statusPlayers[nplayerAtual]);
+    colocarCartasNaTela();
+}
+
 function rodada() {
     const playerAtual = document.querySelectorAll(".card")[nplayerAtual];
-    action.classList.remove("escondido")
+    action.classList.remove("escondido");
 
-    nplayerAtual = nplayerAtual + 1 >= nplayers? 0 : nplayerAtual + 1;
+    renderGame(statusPlayers[nplayerAtual]);
     console.log(playerAtual);
+}
+
+function passarRodada() {
+    while(true) {
+        nplayerAtual = (nplayerAtual + 1) % nplayers;
+        if(statusPlayers[nplayerAtual].vivo === true) break;
+    }
+    
+    action.classList.add("escondido");
+    buttonRodada.innerHTML = `Vez de ${statusPlayers[nplayerAtual].nome}`;
+    renderGame(statusPlayers[nplayerAtual])
 }
 
 let configs = document.getElementById("config");
@@ -149,10 +217,14 @@ function toggleConfig() {
 
 function acao(action) {
     switch(action) {
-        case action:
+        case "taxar":
             duque();
             break;
-    
+
+        case "golpe":
+            golpeDeEstado();
+            break;
+
         default:
             break;
     }
