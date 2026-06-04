@@ -88,7 +88,6 @@ let action = document.querySelector(".action");
 
 
 function renderGame() {
-
     let htmlGerado = "";
     gameTable.innerHTML = "";
 
@@ -165,12 +164,17 @@ function acao(action) {
             sapeca();
             break;
 
+        case "assassinar":
+            assasino();
+            break;
+
         default:
             break;
     }
 }
 
 function passarRodada() {
+    alvo = null;
     while(true) {
         nplayerAtual = (nplayerAtual + 1) % nplayers;
         if(statusPlayers[nplayerAtual].vivo === true) break;
@@ -213,8 +217,9 @@ function colocarCartasNaTela() {
     escolherCartas.innerHTML = htmlGerado;
 }
 
-let escolha = [];
+let selecionados = [];
 function sapeca() {
+    selecionados = [];
     let cartaAtual = statusPlayers[nplayerAtual];
     let htmlGerado = "";
     escolherCartas.innerHTML = "";
@@ -222,24 +227,25 @@ function sapeca() {
 
     cartaAtual.cartas.forEach(carta => {
         htmlGerado += `
-            <img class="sapecaCards" src='${cards[carta]}' onclick="trocarCartas(${i})">
+            <img class="sapecaCards" data-carta="${carta}" src='${cards[carta]}'>
         `;
         i++;
     });
 
-    for(let i = 1; i < 2; i++) {
+    for(let i = 1; i <= 2; i++) {
         htmlGerado += `
-            <img class="sapecaCards" src='${cards[deck[i-1]]}' onclick="trocarCartas(${i+2})">
+            <img class="sapecaCards" data-carta="${deck[i-1]}" src='${cards[deck[i-1]]}'>
         `;
     }
 
     htmlGerado += `
         <button onclick="trocarCartas()">Trocar</button>
     `
-
-    let cartas = document.querySelectorAll(".sapecaCards");
     escolherCartas.innerHTML = htmlGerado;
-    let selecionados = [];
+    let cartas = document.querySelectorAll(".sapecaCards");
+    
+
+    
 
     cartas.forEach(carta => {
         carta.addEventListener("click", () => {
@@ -260,31 +266,55 @@ function sapeca() {
             selecionados.push(carta);
         })
     })
-
-    
 }
 
-function trocarCartas(troca = [], tam) {
-    if(troca.length !== tam) {
-        alert("Número de cartas errado");
-        return;
-    }
+function trocarCartas() {
+    if(selecionados.length !== statusPlayers[nplayerAtual].cartas.length) return;
+
+    let novasCartas = selecionados.map(carta => 
+        Number(carta.dataset.carta)
+    );
 
     statusPlayers[nplayerAtual].cartas.forEach(carta => {
         deck.push(carta);
     });
+
+    novasCartas.forEach(carta => {
+        let index = deck.indexOf(carta);
+
+        if(index !== -1) {
+            deck.splice(index, 1);
+        }
+    });
+    
+    statusPlayers[nplayerAtual].cartas = novasCartas;
+    selecionados = [];
+    escolherCartas.innerHTML = "";
     embaralhar();
 
-    statusPlayers[nplayerAtual].cartas = troca;
-    
+    passarRodada();
 }
 
+
+function assasino() {
+    if(alvo === null) {
+        alert("Escolha um pessoa para matar");
+        return;
+    }
+    if(statusPlayers[nplayerAtual].moedas < 3) {
+        alert("Sem moedas suficientes");
+        return;
+    }
+
+    matar(alvo);
+}
 
 function capitao() {
     if(alvo === null) {
         alert("Escolha um pessoa para roubar");
         return;
     }
+    if(overCoins()) return;
     if(statusPlayers[alvo].moedas <= 0) {
         alert("Sem moedas para roubar");
         return;
@@ -295,7 +325,7 @@ function capitao() {
     statusPlayers[nplayerAtual].moedas += qtdCoins;
 
     alvo = null;
-    renderGame();
+
     passarRodada();
 }
 
@@ -306,6 +336,29 @@ function duque() {
 
     console.log(statusPlayers[nplayerAtual].moedas);
 }
+
+
+function golpeDeEstado() {
+    if(statusPlayers[nplayerAtual].moedas < 7) {
+        alert("Moedas insuficientes, faça outra ação");
+        return;
+    }
+
+    if(!statusPlayer[alvo].vivo) {
+        alert("jogador já morto");
+        return;
+    }
+
+    if(alvo === null) {
+        alert("Escolha um alvo");
+        return;
+    }
+
+    statusPlayers[nplayerAtual].moedas -= 7;
+
+    colocarCartasNaTela();
+}
+
 
 function matar(indiceCarta) {
     statusPlayers[alvo].cartas.splice(indiceCarta, 1);
@@ -321,23 +374,8 @@ function matar(indiceCarta) {
     passarRodada();
 }
 
-function golpeDeEstado() {
-    if(statusPlayers[nplayerAtual].moedas < 7) {
-        alert("Moedas insuficientes, faça outra ação");
-        return;
-    }
-
-    if(alvo === null) {
-        alert("Escolha um alvo");
-        return;
-    }
-
-    statusPlayers[nplayerAtual].moedas -= 7;
-    renderGame();
-    colocarCartasNaTela();
-}
-
 function rodada() {
+    alvo = null;
     const playerAtual = document.querySelectorAll(".card")[nplayerAtual];
     action.classList.remove("escondido");
 
