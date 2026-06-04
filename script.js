@@ -87,7 +87,7 @@ let nplayerAtual = 0;
 let action = document.querySelector(".action");
 
 
-function renderGame(playerAtual) {
+function renderGame() {
 
     let htmlGerado = "";
     gameTable.innerHTML = "";
@@ -98,7 +98,7 @@ function renderGame(playerAtual) {
             imgs += `<img src='${cards[carta]}'></img>`;
         }) 
         htmlGerado += `
-        <div class='${player === playerAtual? "card" : "outros"}' ${player !== playerAtual ? `onclick="clicouPlayer(${index})"` : ""}
+        <div class='${index === nplayerAtual? "card" : "outros"}' ${index !== nplayerAtual ? `onclick="clicouPlayer(${index})"` : ""}
         data-player="${index}">
 
             <h3 class='nick'>${player.nome}</h3>
@@ -135,30 +135,176 @@ function clicouPlayer(index) {
     document.querySelector(`[data-player="${index}"]`).classList.add("marcado");
 }
 
-function duque() {
-    if(statusPlayers[nplayerAtual].moedas >= 10) {
-        renderGame(statusPlayers[nplayerAtual])
-        golpeDeEstado();
-        return;
-    }
-    statusPlayers[nplayerAtual].moedas += 3;
-    passarRodada();
+//Controlar ações de personagens
+let escolherCartas = document.querySelector(".chooseCard");
+const painelAcoesEl = document.querySelector(".painel-acoes");
 
-    console.log(statusPlayers[nplayerAtual].moedas);
+function acao(action) {
+    switch(action) {
+        case "renda":
+            renda();
+            break;
+        
+        case "ajuda_externa":
+            ajudaExterna();
+            break;
+
+        case "taxar":
+            duque();
+            break;
+
+        case "golpe":
+            golpeDeEstado();
+            break;
+
+        case "roubar":
+            capitao();
+            break;
+
+        case "trocar":
+            sapeca();
+            break;
+
+        default:
+            break;
+    }
 }
 
-let escolherCartas = document.querySelector(".chooseCard");
+function passarRodada() {
+    while(true) {
+        nplayerAtual = (nplayerAtual + 1) % nplayers;
+        if(statusPlayers[nplayerAtual].vivo === true) break;
+    }
+    
+    action.classList.add("escondido");
+    buttonRodada.innerHTML = `Vez de ${statusPlayers[nplayerAtual].nome}`;
+    renderGame()
+}
+
+function overCoins() {
+    if(statusPlayers[nplayerAtual].moedas >= 10) {
+        alert("Você está com muitas moedas")
+        return true;
+    }
+    return false;
+}
+
+function renda() {
+    statusPlayers[nplayerAtual].moedas++;
+    passarRodada();
+}
+
+function ajudaExterna() {
+    statusPlayers[nplayerAtual].moedas += 2;
+    passarRodada();
+}
+
+
 
 function colocarCartasNaTela() {
     let htmlGerado = "";
     let i = 0;
     statusPlayers[alvo].cartas.forEach(carta => {
         htmlGerado += `
-            <img src='${cards[carta]}' onclick="matar(${i})">
-        `
+            <img class="grande" src='${cards[carta]}' onclick="matar(${i})">
+        `;
         i++;
     });
     escolherCartas.innerHTML = htmlGerado;
+}
+
+let escolha = [];
+function sapeca() {
+    let cartaAtual = statusPlayers[nplayerAtual];
+    let htmlGerado = "";
+    escolherCartas.innerHTML = "";
+    let i = 1;
+
+    cartaAtual.cartas.forEach(carta => {
+        htmlGerado += `
+            <img class="sapecaCards" src='${cards[carta]}' onclick="trocarCartas(${i})">
+        `;
+        i++;
+    });
+
+    for(let i = 1; i < 2; i++) {
+        htmlGerado += `
+            <img class="sapecaCards" src='${cards[deck[i-1]]}' onclick="trocarCartas(${i+2})">
+        `;
+    }
+
+    htmlGerado += `
+        <button onclick="trocarCartas()">Trocar</button>
+    `
+
+    let cartas = document.querySelectorAll(".sapecaCards");
+    escolherCartas.innerHTML = htmlGerado;
+    let selecionados = [];
+
+    cartas.forEach(carta => {
+        carta.addEventListener("click", () => {
+            if(carta.classList.contains("choose")) {
+                carta.classList.remove("choose");
+
+                selecionados = selecionados.filter(c => c !== carta);
+
+                return;
+            }
+
+            if(selecionados.length >= 2) {
+                return;
+            }
+
+            carta.classList.add("choose");
+            console.log(`${carta} adicionada`);
+            selecionados.push(carta);
+        })
+    })
+
+    
+}
+
+function trocarCartas(troca = [], tam) {
+    if(troca.length !== tam) {
+        alert("Número de cartas errado");
+        return;
+    }
+
+    statusPlayers[nplayerAtual].cartas.forEach(carta => {
+        deck.push(carta);
+    });
+    embaralhar();
+
+    statusPlayers[nplayerAtual].cartas = troca;
+    
+}
+
+
+function capitao() {
+    if(alvo === null) {
+        alert("Escolha um pessoa para roubar");
+        return;
+    }
+    if(statusPlayers[alvo].moedas <= 0) {
+        alert("Sem moedas para roubar");
+        return;
+    }
+
+    let qtdCoins = statusPlayers[alvo].moedas >= 2? 2 : 1;
+    statusPlayers[alvo].moedas -= qtdCoins;
+    statusPlayers[nplayerAtual].moedas += qtdCoins;
+
+    alvo = null;
+    renderGame();
+    passarRodada();
+}
+
+function duque() {
+    if(overCoins()) return;
+    statusPlayers[nplayerAtual].moedas += 3;
+    passarRodada();
+
+    console.log(statusPlayers[nplayerAtual].moedas);
 }
 
 function matar(indiceCarta) {
@@ -187,7 +333,7 @@ function golpeDeEstado() {
     }
 
     statusPlayers[nplayerAtual].moedas -= 7;
-    renderGame(statusPlayers[nplayerAtual]);
+    renderGame();
     colocarCartasNaTela();
 }
 
@@ -199,33 +345,7 @@ function rodada() {
     console.log(playerAtual);
 }
 
-function passarRodada() {
-    while(true) {
-        nplayerAtual = (nplayerAtual + 1) % nplayers;
-        if(statusPlayers[nplayerAtual].vivo === true) break;
-    }
-    
-    action.classList.add("escondido");
-    buttonRodada.innerHTML = `Vez de ${statusPlayers[nplayerAtual].nome}`;
-    renderGame(statusPlayers[nplayerAtual])
-}
-
 let configs = document.getElementById("config");
 function toggleConfig() {
     configs.classList.toggle("escondido");
-}
-
-function acao(action) {
-    switch(action) {
-        case "taxar":
-            duque();
-            break;
-
-        case "golpe":
-            golpeDeEstado();
-            break;
-
-        default:
-            break;
-    }
 }
