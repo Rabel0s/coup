@@ -33,23 +33,31 @@ body {
     background: radial-gradient(circle, #071B4A, #020F2F);
     color: #F8FAFC;
     font-family: 'Bebas Neue', sans-serif;
-    justify-content: center;
     align-items: center;
 }
 
 .action {
     display: flex;
-    flex-direction: column;
-    justify-content: end;
-    align-items: center;
+    flex: 1;
+}
+
+.action button {
+    flex: 1;
+    width: auto;
+    height: 70px;
+    min-width: 0;
+    margin: 3px;
 }
 
 .painel-acoes {
+    position: absolute;
+    bottom: 10px;
+
+    width: 80vw;
     display: flex;
     justify-content: center;
     background: linear-gradient(to top, #071B4A, #020F2F);
     color: #F8FAFC;
-    width: 40vw;
     padding: 20px;
     border-radius: 20px;
     border: 2px solid #1E3A8A;
@@ -81,8 +89,17 @@ body {
     grid-template-columns: repeat(3, 200px);
     grid-template-rows: repeat(2, auto);
     justify-content: center;
+    align-items: start;
     gap: 50px;
     border-radius: 10px;
+    margin-top: 30px;
+}
+
+.chooseCard {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: auto auto;
 }
 
 select {
@@ -175,6 +192,21 @@ option {
     background-color: rgb(5, 1, 22);
 }
 
+.fundoDuvida {
+    position: absolute;
+    width: 105vw;
+    height: 105vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 999;
+}
+.duvida {
+    
+}
+
 button {
     border-radius: 10px;
     width: 150px;
@@ -191,8 +223,9 @@ button:hover {
     transform: scale(1.05)
 }
 
-#acoesCard, #acoesGerais {
+.acoesCard, .acoesGerais {
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: 8px;
 }
@@ -254,11 +287,11 @@ h3 {
     transform: scale(1.05);
 }
 
-.sapecaCards {
+.sapecaCards, .buttonSapeca{
     width: 75px;
     height: 125px;
-    margin: 0 5px;
 }
+
 
 .sapecaCards:hover {
     transform: scale(1.05);

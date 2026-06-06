@@ -10,7 +10,8 @@ let nplayers = 2;
 let playersEl = document.getElementById("Nplayers");
 const nome = document.getElementById("nome");
 let linhaEl = document.querySelector(".linha");
-let buttonRodada = document.querySelector(".rodada");
+let action = document.querySelector(".painel-acoes");
+
 
 playersEl.addEventListener("input", () => {
     nome.innerHTML = "";
@@ -38,6 +39,7 @@ function embaralhar() {
 
 function startGame() {
     deck = [];
+    action.classList.remove("escondido");
     const nomeInputs = document.querySelectorAll("#names");
 
     for(let card in cards) {
@@ -61,30 +63,17 @@ function startGame() {
             cartas: [carta1, carta2],
             vivo: true
         });
-
-        htmlGerado += `
-            <div class='card'>
-                <h3 class='nick'>${nick}</h3>
-                <div class='imgCard'>
-                    <img src='${cards[carta1]}'>
-                    <img src='${cards[carta2]}'>
-                </div>
-                <h3>R$ 2</h3>
-            </div>
-        `;
     }
     
     escolhasContainer.classList.add("escondido");
     linhaEl.classList.add("escondido");
     gameTable.classList.remove("escondido");
-    buttonRodada.classList.remove("escondido");
-    gameTable.innerHTML = htmlGerado;
-    const playerIni = document.querySelectorAll(".card .nick")[0].textContent;
-    buttonRodada.innerHTML = `Vez de ${playerIni}`;
+    renderGame();
+    const playerIni = statusPlayers[0].nome;
 }
 
 let nplayerAtual = 0;
-let action = document.querySelector(".action");
+
 
 
 function renderGame() {
@@ -136,7 +125,10 @@ function clicouPlayer(index) {
 
 //Controlar ações de personagens
 let escolherCartas = document.querySelector(".chooseCard");
-const painelAcoesEl = document.querySelector(".painel-acoes");
+
+
+let duvidaAtual = {};
+let jogadorDecidindo = 0;
 
 function acao(action) {
     switch(action) {
@@ -148,12 +140,51 @@ function acao(action) {
             ajudaExterna();
             break;
 
-        case "taxar":
-            duque();
-            break;
-
         case "golpe":
             golpeDeEstado();
+            break;
+
+        case "taxar":
+            abrirDuvida({
+                jogador: nplayerAtual,
+                jogada: "taxar",
+                carta: 3
+            });
+            break;
+
+        case "roubar":
+            abrirDuvida({
+                jogador: nplayerAtual,
+                jogada: "roubar",
+                carta: 4
+            });
+            break;
+
+        case "trocar":
+            abrirDuvida({
+                jogador: nplayerAtual,
+                jogada: "trocar",
+                carta: 5
+            });
+            break;
+
+        case "assassinar":
+            abrirDuvida({
+                jogador: nplayerAtual,
+                jogada: "assasinar",
+                carta: 1
+            });
+            break;
+
+        default:
+            break;
+    }
+}
+
+function executarAcao(action) {
+    switch(action) {
+        case "taxar":
+            duque();
             break;
 
         case "roubar":
@@ -173,6 +204,37 @@ function acao(action) {
     }
 }
 
+function abrirDuvida(info) {
+    duvidaAtual = info;
+    jogadorDecidindo = (info.jogador + 1) % nplayers;
+    document.querySelector(".fundoDuvida").classList.remove("escondido");
+    proximoDecisor();
+}
+
+function proximoDecisor() {
+    if(jogadorDecidindo === nplayerAtual) return;
+    
+    const duvidaText = document.querySelector(".duvidaText");
+
+    duvidaText.innerHTML = `
+        ${statusPlayers[duvidaAtual.jogador].nome} usou ${duvidaAtual.jogada}
+        <br>
+        ${statusPlayers[jogadorDecidindo].nome}, deseja dúvidar?
+    `;
+}
+
+function passarDuvida() {
+    jogadorDecidindo = (jogadorDecidindo + 1) % nplayers;
+
+    if(jogadorDecidindo === duvidaAtual.jogador) {
+        document.querySelector(".fundoDuvida").classList.add("escondido");
+        executarAcao(duvidaAtual.jogada);
+    }
+    else {
+        proximoDecisor();
+    }
+}
+
 function passarRodada() {
     alvo = null;
     while(true) {
@@ -180,8 +242,6 @@ function passarRodada() {
         if(statusPlayers[nplayerAtual].vivo === true) break;
     }
     
-    action.classList.add("escondido");
-    buttonRodada.innerHTML = `Vez de ${statusPlayers[nplayerAtual].nome}`;
     renderGame()
 }
 
@@ -206,6 +266,7 @@ function ajudaExterna() {
 
 
 function colocarCartasNaTela() {
+    toggleViewCard();
     let htmlGerado = "";
     let i = 0;
     statusPlayers[alvo].cartas.forEach(carta => {
@@ -218,7 +279,19 @@ function colocarCartasNaTela() {
 }
 
 let selecionados = [];
+let tipoAcao = document.querySelectorAll(".tipoAcao");
+
+function toggleViewCard() {
+    tipoAcao.forEach(acao => {
+        acao.classList.toggle("escondido");
+        console.log(acao)
+    });
+    escolherCartas.classList.toggle("escondido");
+}
+
+
 function sapeca() {
+    toggleViewCard();
     selecionados = [];
     let cartaAtual = statusPlayers[nplayerAtual];
     let htmlGerado = "";
@@ -239,7 +312,7 @@ function sapeca() {
     }
 
     htmlGerado += `
-        <button onclick="trocarCartas()">Trocar</button>
+        <button class="buttonSapeca" onclick="trocarCartas()">Trocar</button>
     `
     escolherCartas.innerHTML = htmlGerado;
     let cartas = document.querySelectorAll(".sapecaCards");
@@ -257,7 +330,7 @@ function sapeca() {
                 return;
             }
 
-            if(selecionados.length >= 2) {
+            if(selecionados.length >= statusPlayers[nplayerAtual].cartas.length) {
                 return;
             }
 
@@ -291,7 +364,7 @@ function trocarCartas() {
     selecionados = [];
     escolherCartas.innerHTML = "";
     embaralhar();
-
+    toggleViewCard();
     passarRodada();
 }
 
@@ -306,7 +379,8 @@ function assasino() {
         return;
     }
 
-    matar(alvo);
+    statusPlayers[nplayerAtual].moedas -= 3;
+    colocarCartasNaTela();
 }
 
 function capitao() {
@@ -344,7 +418,7 @@ function golpeDeEstado() {
         return;
     }
 
-    if(!statusPlayer[alvo].vivo) {
+    if(!statusPlayers[alvo].vivo) {
         alert("jogador já morto");
         return;
     }
@@ -371,13 +445,13 @@ function matar(indiceCarta) {
 
     alvo = null;
 
+    toggleViewCard();
     passarRodada();
 }
 
 function rodada() {
     alvo = null;
     const playerAtual = document.querySelectorAll(".card")[nplayerAtual];
-    action.classList.remove("escondido");
 
     renderGame(statusPlayers[nplayerAtual]);
     console.log(playerAtual);

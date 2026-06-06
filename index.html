@@ -45,31 +45,39 @@
     <div class="container escondido">
 
     </div>
+    <div class="fundoDuvida escondido">
+        <div class="duvida">
+            <h3>DUVIDA</h3>
 
-    <div class="chooseCard">
-        
+            <p class="duvidaText"></p>
+            <button onclick="duvidar()">Dúvidar</button>
+            <button onclick="passarDuvida()">Passar vez</button>
+        </div>
     </div>
 
-    <button class="rodada escondido" onclick="rodada()"></button>
-
-    <div class="action escondido">
-        <div class="painel-acoes">
-            <div id="acoesCard">
-                <h3>Ações de Personagem</h3>
+    <div class="painel-acoes escondido">
+        <div class="chooseCard escondido"></div>
+        
+        <div class="acoesCard tipoAcao">
+            <h3>Ações de Personagem</h3>
+            <div class="action">
                 <button onclick="acao('taxar')">Taxar</button>
                 <button onclick="acao('assassinar')">Assassinar</button>
                 <button onclick="acao('trocar')">Trocar</button>
                 <button onclick="acao('roubar')">Roubar</button>
             </div>
+        </div>
 
-            <div id="acoesGerais">
-                <h3>Ações Gerais</h3>
+        <div class="acoesGerais tipoAcao">
+            <h3>Ações Gerais</h3>
+            <div class="action">
                 <button onclick="acao('renda')">Renda</button>
                 <button onclick="acao('ajuda_externa')">Ajuda Externa</button>
                 <button onclick="acao('golpe')">Golpe</button>
             </div>
         </div>
     </div>
+    
 
     
     
