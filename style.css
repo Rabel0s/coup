@@ -192,6 +192,10 @@ option {
     background-color: rgb(5, 1, 22);
 }
 
+strong {
+    color: #e30505;
+}
+
 .fundoDuvida {
     position: absolute;
     width: 105vw;
@@ -204,7 +208,10 @@ option {
     z-index: 999;
 }
 .duvida {
-    
+    background-color: #02040b;
+    border-radius: 20px;
+    padding: 10px;
+    box-shadow: 0 0 15px white;
 }
 
 button {
@@ -215,6 +222,24 @@ button {
     border: 2px solid #0066FF;
     color: #F8FAFC;
     transition: 0.3s;
+}
+
+.buttonDuvida {
+    border-color: #e30505;
+}
+.buttonDuvida:hover {
+    background-color: #e30505;
+    box-shadow: 0 0 20px #c76868;
+    color: rgb(255, 255, 255);
+}
+
+.buttonPassar {
+    border-color: rgb(151, 150, 150);
+}
+.buttonPassar:hover {
+    background-color: #ffffff;
+    box-shadow: 0 0 20px #c76868;
+    color: black;
 }
 
 button:hover {

@@ -207,10 +207,11 @@ function executarAcao(action) {
 function abrirDuvida(info) {
     duvidaAtual = info;
     jogadorDecidindo = (info.jogador + 1) % nplayers;
-    document.querySelector(".fundoDuvida").classList.remove("escondido");
+    areaDuvida.classList.remove("escondido");
     proximoDecisor();
 }
 
+let areaDuvida = document.querySelector(".fundoDuvida");
 function proximoDecisor() {
     if(jogadorDecidindo === nplayerAtual) return;
     
@@ -227,11 +228,22 @@ function passarDuvida() {
     jogadorDecidindo = (jogadorDecidindo + 1) % nplayers;
 
     if(jogadorDecidindo === duvidaAtual.jogador) {
-        document.querySelector(".fundoDuvida").classList.add("escondido");
+        areaDuvida.classList.add("escondido");
         executarAcao(duvidaAtual.jogada);
     }
     else {
         proximoDecisor();
+    }
+}
+
+function duvidar() {
+    if(statusPlayers[nplayerAtual].cartas.includes(duvidaAtual.carta)) {
+        passarDuvida();
+    }
+    else {
+        alvo = nplayerAtual;
+        areaDuvida.classList.add("escondido");
+        colocarCartasNaTela();
     }
 }
 
