@@ -81,6 +81,7 @@ let nplayerAtual = 0;
 function renderGame() {
     let htmlGerado = "";
     gameTable.innerHTML = "";
+    showCardButton.classList.remove("escondido");
 
     statusPlayers.forEach((player, index) => {
         let imgs = "";
@@ -132,6 +133,7 @@ let escolherCartas = document.querySelector(".chooseCard");
 let duvidaAtual = {};
 let jogadorDecidindo = 0;
 
+
 let blurCard = document.querySelector(".overLay");
 function mostrarCartas() {
     blurCard.classList.remove("escondido");
@@ -142,7 +144,7 @@ function mostrarCartas() {
     card.querySelectorAll("img").forEach(carta => {
         carta.src = cards[statusPlayers[nplayerAtual].cartas[i]]
         i++;
-    })
+    });
 }
 
 function esconderCartas() {
@@ -152,7 +154,66 @@ function esconderCartas() {
     
     card.querySelectorAll("img").forEach(carta => {
         carta.src = backCard;
-    })
+    });
+}
+
+let showCardButton = document.querySelector(".showCard");
+showCardButton.addEventListener("mousedown", mostrarCartas);
+showCardButton.addEventListener("mouseup", esconderCartas);
+showCardButton.addEventListener("touchstart", mostrarCartas);
+showCardButton.addEventListener("touchend", esconderCartas);
+
+let informacoesPainel = document.querySelector(".informacoes");
+function mostrarCartasDeTodos() {
+    tipoAcao.forEach(acao => {
+        acao.classList.add("escondido");
+    });
+
+    htmlGerado = `
+        <div>
+            <h3>${(nplayerAtual + 1) % nplayers === 0? "Finalizar" : `Passe o celular para ${statusPlayers[nplayerAtual + 1].nome}`}</h3>
+            <button onclick="proximoAver()">Passar vez</button>
+        </div>
+    `;
+    informacoesPainel.classList.remove("escondido")
+    informacoesPainel.innerHTML = htmlGerado;
+}
+
+function proximoAver() {
+    passarRodada();
+    if(nplayerAtual === 0) {
+        informacoesPainel.classList.add("escondido");
+        tipoAcao.forEach(acao => {
+            acao.classList.remove("escondido");
+        });
+        return;
+    }
+    mostrarCartasDeTodos();
+}
+
+
+let acaoAtual = {
+    tipo: "",
+    jogador: null,
+    alvo: null,
+    bloqueavel: false,
+    bloqueadoPor: null,
+};
+
+const regrasDeBlock = {
+    assassinar: 2,
+    ajuda_externa: 3,
+    roubar: [4, 5]
+}
+
+let painelBloqueio = document.querySelector("bloqueio");
+function resolverAcao() {
+    if(acaoAtual.bloqueavel) {
+
+    }
+    else {
+
+    }
 }
 
 function acao(action) {
@@ -162,7 +223,14 @@ function acao(action) {
             break;
         
         case "ajuda_externa":
-            ajudaExterna();
+            acaoAtual = {
+                tipo: "ajuda_externa",
+                jogador: nplayerAtual,
+                alvo: null,
+                bloqueavel: true,
+                bloqueadoPor: 3
+            };
+            resolverAcao()
             break;
 
         case "golpe":
@@ -194,6 +262,10 @@ function acao(action) {
             break;
 
         case "assassinar":
+            if(alvo === null) {
+                alert("Escolha uma pessoa para matar");
+                return;
+            }   
             abrirDuvida({
                 jogador: nplayerAtual,
                 jogada: "assassinar",
@@ -220,7 +292,7 @@ function executarAcao(action) {
             sapeca();
             break;
 
-        case "assassinar":
+        case "assassinar":    
             assasino();
             break;
 
@@ -295,24 +367,26 @@ function overCoins() {
 }
 
 function renda() {
+    if(overCoins()) return;
     statusPlayers[nplayerAtual].moedas++;
     passarRodada();
 }
 
 function ajudaExterna() {
+    if(overCoins()) return;
     statusPlayers[nplayerAtual].moedas += 2;
     passarRodada();
 }
-
 
 
 function colocarCartasNaTela() {
     toggleViewCard();
     let htmlGerado = "";
     let i = 0;
+    showCardButton.classList.add("escondido");
     statusPlayers[alvo].cartas.forEach(carta => {
         htmlGerado += `
-            <img class="grande" src='${cards[carta]}' onclick="matar(${i})">
+            <img class="grande" src='${backCard}' onclick="matar(${i})">
         `;
         i++;
     });
@@ -334,6 +408,7 @@ function toggleViewCard() {
 function sapeca() {
     toggleViewCard();
     selecionados = [];
+    showCardButton.classList.add("escondido");
     let cartaAtual = statusPlayers[nplayerAtual];
     let htmlGerado = "";
     escolherCartas.innerHTML = "";
@@ -411,10 +486,6 @@ function trocarCartas() {
 
 
 function assasino() {
-    if(alvo === null) {
-        alert("Escolha um pessoa para matar");
-        return;
-    }
     if(statusPlayers[nplayerAtual].moedas < 3) {
         alert("Sem moedas suficientes");
         return;
