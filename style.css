@@ -26,6 +26,14 @@ h1 {
     box-shadow: 0 0 10px #3B82F6;
 }
 
+.nick {
+    font-size: 20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
 body {
     height: 100vh;
     display: flex;
@@ -35,6 +43,7 @@ body {
     font-family: 'Bebas Neue', sans-serif;
     align-items: center;
 }
+
 
 .action {
     display: flex;
@@ -53,15 +62,20 @@ body {
     position: absolute;
     bottom: 10px;
 
-    width: 80vw;
+    width: 90%;
+    margin: auto;
+    margin-top: 40px;
+    padding: 25px;
+    border-radius: 28px;
+    background: rgba(10, 15, 35, 0.75);
+    border: 2px solid rgba(0, 180, 255, 0.2);
+    backdrop-filter: blur(14px);
+
     display: flex;
     justify-content: center;
     background: linear-gradient(to top, #071B4A, #020F2F);
     color: #F8FAFC;
-    padding: 20px;
-    border-radius: 20px;
-    border: 2px solid #1E3A8A;
-    gap: 20px;
+    gap: 50px;
     box-shadow: 0 0 30px rgba(0,102,255,0.3);
     margin-bottom: 20px;
 }
@@ -86,6 +100,15 @@ body {
 
 .container {
     display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+    justify-items: center;
+    gap: 35px;
+    margin-top: 30px;
+}
+
+/*.container {
+    display: grid;
     grid-template-columns: repeat(3, 200px);
     grid-template-rows: repeat(2, auto);
     justify-content: center;
@@ -93,7 +116,7 @@ body {
     gap: 50px;
     border-radius: 10px;
     margin-top: 30px;
-}
+}*/
 
 .chooseCard {
     display: flex;
@@ -159,14 +182,23 @@ input:focus {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 150px;
-    aspect-ratio: 1 / 1;
+    width: 250px;
     background-color: rgb(5, 31, 56);
-    border-radius: 10px;
-    border: solid 1px rgb(4, 4, 43);
+    border-radius: 15px;
     color: rgb(208, 210, 212);
     padding: 10px;
-    box-shadow: 0 0 30px rgba(0,102,255,0.3);
+
+    position: relative;
+    z-index: 999;
+    transition: 5s;
+    transform-style: preserve-3d;
+
+    border: 2px solid #00ffff;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+}
+
+.flip {
+    transform: rotateY(180deg);
 }
 
 #imgCard {
@@ -174,7 +206,7 @@ input:focus {
 }
 
 img {
-    width: 50px;
+    width: 80px;
     border-radius: 5px;
 }
 
@@ -212,6 +244,12 @@ strong {
     border-radius: 20px;
     padding: 10px;
     box-shadow: 0 0 15px white;
+}
+
+.coin {
+    color: gold;
+    font-size: 22px;
+    text-shadow: 0 0 12px gold;
 }
 
 button {
@@ -256,7 +294,7 @@ button:hover {
 }
 
 h3 {
-    font-size: 18px;
+    font-size: 20px;
     text-align: center;
 }
 
@@ -286,17 +324,20 @@ h3 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 150px;
-    aspect-ratio: 1 / 1;
-    background-color: rgb(5, 31, 56);
-    border-radius: 10px;
-    border: solid 1px rgb(4, 4, 43);
+    width: 250px;
+    border-radius: 15px;
+    border: solid 1px #00d9ff;
     color: rgb(208, 210, 212);
     padding: 10px;
     box-shadow: 0 0 30px rgba(0,102,255,0.3);
-    background-color: #1E3A8A;
+    background: linear-gradient(to bottom, #1E3A8A, #0f1e47);
     transition: 0.3s;
-    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.outros:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 0 35px rgba(0, 200, 255, 0.45);
 }
 
 .choose {
@@ -308,27 +349,92 @@ h3 {
     transform: scale(1.1);
 }
 
-.outros:hover {
-    transform: scale(1.05);
-}
 
 .sapecaCards, .buttonSapeca{
     width: 75px;
     height: 125px;
 }
 
+.actionStrong {
+    color: rgb(4, 190, 4);
+}
+
+.nameStrong {
+    color: rgb(229, 229, 4);
+}
 
 .sapecaCards:hover {
     transform: scale(1.05);
 }
 
+
+.bGeral, .bPersonagem {
+    padding: 18px;
+    text-align: center;
+    border-radius: 16px;
+    border: 2px solid #00d9ff;
+    background: rgba(0, 80, 130, 0.2);
+    color: aliceblue;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.25s;
+    box-shadow: 0 0 12x rgba(0, 217, 255, 0.25);
+    backdrop-filter: blur(5px);
+}
+
+.bGeral:hover, .bPersonagem:hover {
+    transform: translateY(-4px);
+    background: rgba(0, 170, 255, 0.25);
+    box-shadow: 0 0 22px rgba(0, 217, 255, 0.55);
+}
+
+.bGeral:active, .bPersonagem:active {
+    transform: scale(0.95);
+} 
+
 .marcado {
     border: 3px solid red;
-    transform: scale(1.08);
+    transform: translateY(-8px) scale(1.05);
+}
+.marcado:hover {
+    transform: translateY(-8px) scale(1.05);
+}
+
+.overLay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(5px);
+    z-index: 10;
+    transition: 0.3s;
+}
+
+.privateCards {
+    transform: scale(1.1) translate(0, +30%);
+    
+    transition: 0.75s;
+    animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
 }
 
 .morto {
     background-color: #EF4444;
     border: none;
     transform: scale(1.);
+}
+
+.duvidaText {
+    font-family: Arial, sans-serif;
 }

@@ -42,12 +42,14 @@
         </a>
     </div>
 
+    <div class="overLay escondido"></div>
+
     <div class="container escondido">
 
     </div>
     <div class="fundoDuvida escondido">
         <div class="duvida">
-            <h3><strong>DUVIDA</strong></h3>
+            <h3><strong>DÚVIDA</strong>❗</h3>
 
             <p class="duvidaText"></p>
             <button class="buttonDuvida" onclick="duvidar()">Dúvidar</button>
@@ -61,19 +63,19 @@
         <div class="acoesCard tipoAcao">
             <h3>Ações de Personagem</h3>
             <div class="action">
-                <button onclick="acao('taxar')">Taxar</button>
-                <button onclick="acao('assassinar')">Assassinar</button>
-                <button onclick="acao('trocar')">Trocar</button>
-                <button onclick="acao('roubar')">Roubar</button>
+                <button class="bPersonagem" onclick="acao('taxar')">Taxar</button>
+                <button class="bPersonagem" onclick="acao('assassinar')">Assassinar</button>
+                <button class="bPersonagem" onclick="acao('trocar')">Trocar</button>
+                <button class="bPersonagem" onclick="acao('roubar')">Roubar</button>
             </div>
         </div>
 
         <div class="acoesGerais tipoAcao">
             <h3>Ações Gerais</h3>
             <div class="action">
-                <button onclick="acao('renda')">Renda</button>
-                <button onclick="acao('ajuda_externa')">Ajuda Externa</button>
-                <button onclick="acao('golpe')">Golpe</button>
+                <button class="bGeral" onclick="acao('renda')">Renda</button>
+                <button class="bGeral" onclick="acao('ajuda_externa')">Ajuda Externa</button>
+                <button class="bGeral" onclick="acao('golpe')">Golpe</button>
             </div>
         </div>
     </div>

@@ -6,6 +6,8 @@ let cards = {
     5: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS_aQHSyvTcnEBsG-YCPM6H-wHXOUcbWMFIcUPrxYYFg&s"
 };
 
+const backCard = "ChatGPT Image 6 de jun. de 2026, 21_38_21.png";
+
 let nplayers = 2;
 let playersEl = document.getElementById("Nplayers");
 const nome = document.getElementById("nome");
@@ -83,7 +85,7 @@ function renderGame() {
     statusPlayers.forEach((player, index) => {
         let imgs = "";
         player.cartas.forEach(carta => {
-            imgs += `<img src='${cards[carta]}'></img>`;
+            imgs += `<img src='${backCard}'></img>`;
         }) 
         htmlGerado += `
         <div class='${index === nplayerAtual? "card" : "outros"}' ${index !== nplayerAtual ? `onclick="clicouPlayer(${index})"` : ""}
@@ -95,7 +97,7 @@ function renderGame() {
                 ${imgs}
             </div>
 
-            <h3>R$ ${player.moedas}</h3>
+            <h3><span class="coin">🪙 ${player.moedas}</span></h3>
 
         </div>
         `
@@ -129,6 +131,29 @@ let escolherCartas = document.querySelector(".chooseCard");
 
 let duvidaAtual = {};
 let jogadorDecidindo = 0;
+
+let blurCard = document.querySelector(".overLay");
+function mostrarCartas() {
+    blurCard.classList.remove("escondido");
+    let card = document.querySelector(".card");
+    card.classList.add("privateCards");
+
+    let i = 0;
+    card.querySelectorAll("img").forEach(carta => {
+        carta.src = cards[statusPlayers[nplayerAtual].cartas[i]]
+        i++;
+    })
+}
+
+function esconderCartas() {
+    blurCard.classList.add("escondido");
+    let card = document.querySelector(".card");
+    card.classList.remove("privateCards");
+    
+    card.querySelectorAll("img").forEach(carta => {
+        carta.src = backCard;
+    })
+}
 
 function acao(action) {
     switch(action) {
@@ -171,7 +196,7 @@ function acao(action) {
         case "assassinar":
             abrirDuvida({
                 jogador: nplayerAtual,
-                jogada: "assasinar",
+                jogada: "assassinar",
                 carta: 1
             });
             break;
@@ -218,10 +243,12 @@ function proximoDecisor() {
     const duvidaText = document.querySelector(".duvidaText");
 
     duvidaText.innerHTML = `
-        ${statusPlayers[duvidaAtual.jogador].nome} usou ${duvidaAtual.jogada}
+        <strong class="nameStrong">${statusPlayers[duvidaAtual.jogador].nome}</strong> usou <strong class="actionStrong">${duvidaAtual.jogada}</strong>
         <br>
-        ${statusPlayers[jogadorDecidindo].nome}, deseja dúvidar?
+        <strong class="nameStrong">${statusPlayers[jogadorDecidindo].nome}</strong>, deseja dúvidar?
     `;
+    console.log(duvidaText.innerHTML);
+    console.log(duvidaText.textContent);
 }
 
 function passarDuvida() {
@@ -237,8 +264,10 @@ function passarDuvida() {
 }
 
 function duvidar() {
-    if(statusPlayers[nplayerAtual].cartas.includes(duvidaAtual.carta)) {
-        passarDuvida();
+    if(statusPlayers[duvidaAtual.jogador].cartas.indexOf(String(duvidaAtual.carta)) !== -1) {
+        alvo = jogadorDecidindo;
+        areaDuvida.classList.add("escondido");
+        colocarCartasNaTela();
     }
     else {
         alvo = nplayerAtual;
