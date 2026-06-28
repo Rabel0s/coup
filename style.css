@@ -237,7 +237,7 @@ strong {
     color: #e30505;
 }
 
-.fundoDuvida {
+.fundoDuvida, .fundoResolverAcao {
     position: absolute;
     width: 105vw;
     height: 105vh;
@@ -245,11 +245,11 @@ strong {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 999;
+    background: rgba(63, 63, 63, 0.3);
+    z-index: 1000;
 }
-.duvida {
-    background-color: #02040b;
+.duvida, .resolverAcao {
+    background-color: #090e20;
     border-radius: 20px;
     padding: 10px;
     box-shadow: 0 0 15px white;
@@ -405,9 +405,11 @@ h3 {
 .marcado {
     border: 3px solid red;
     transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 0 22px rgba(225, 42, 21, 0.881);
 }
 .marcado:hover {
     transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 0 22px rgba(225, 42, 21, 0.881);
 }
 
 .overLay {

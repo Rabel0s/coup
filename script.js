@@ -7,6 +7,7 @@ let cards = {
 };
 
 const backCard = "ChatGPT Image 6 de jun. de 2026, 21_38_21.png";
+const deadCard = "cartaMorta.png";
 
 let nplayers = 2;
 let playersEl = document.getElementById("Nplayers");
@@ -37,6 +38,10 @@ function embaralhar() {
 
         [deck[k], deck[j]] = [deck[j], deck[k]];
     }
+}
+function pegarCartaDoBaralho(alvo, indice) {
+    [alvo.cartas[indice], deck[0]] = [deck[0], alvo.cartas[indice]];
+    embaralhar();
 }
 
 function startGame() {
@@ -79,6 +84,7 @@ let nplayerAtual = 0;
 
 
 function renderGame() {
+    tipoDeDuvida = 1;
     let htmlGerado = "";
     gameTable.innerHTML = "";
     showCardButton.classList.remove("escondido");
@@ -86,7 +92,7 @@ function renderGame() {
     statusPlayers.forEach((player, index) => {
         let imgs = "";
         player.cartas.forEach(carta => {
-            imgs += `<img src='${backCard}'></img>`;
+            imgs += `<img src='${cards[carta]}'></img>`;
         }) 
         htmlGerado += `
         <div class='${index === nplayerAtual? "card" : "outros"}' ${index !== nplayerAtual ? `onclick="clicouPlayer(${index})"` : ""}
@@ -197,23 +203,71 @@ let acaoAtual = {
     jogador: null,
     alvo: null,
     bloqueavel: false,
-    bloqueadoPor: null,
+    bloqueadoPor: null
 };
 
 const regrasDeBlock = {
-    assassinar: 2,
-    ajuda_externa: 3,
+    assassinar: [2],
+    ajuda_externa: [3],
     roubar: [4, 5]
 }
 
-let painelBloqueio = document.querySelector("bloqueio");
-function resolverAcao() {
-    if(acaoAtual.bloqueavel) {
+let painelBloqueio = document.querySelector(".bloqueio");
 
-    }
-    else {
+let tipoDeDuvida = 1;
+function bloquear() {
+    let htmlGerado = "";
+    acaoAtual.bloqueadoPor = alvo;
 
+    tipoDeDuvida = 2;
+    areaResolverAcao.classList.remove("escondido");
+    if(infoAcaoAtual.carta === null) {
+        jogadorDecidindo = (nplayerAtual + 1) % nplayers;
+
+        decidirQuemBloqueou()
+        return;
     }
+
+    else htmlGerado = `
+            <h3><strong>ESCOLHER AÇÃO</strong></h3>
+
+            <p><strong class="nameStrong">${statusPlayers[acaoAtual.bloqueadoPor].nome}</strong> bloqueou <strong class="actionStrong">${acaoAtual.tipo.replaceAll("_", " ")}</strong> de <strong class="nameStrong">${statusPlayers[nplayerAtual].nome}</strong></p>
+            <p>Alguem deseja <strong>DUVIDAR</strong></p>
+
+            <button class="buttonPassar" onclick="passarRodada()">Passar</button>
+            <button class="buttonDuvida" onclick="abrirDuvida()">Duvidar</button>
+        `;
+
+    divResolverAcao.innerHTML = htmlGerado;
+}
+
+function decidirQuemBloqueou() {
+    let htmlGerado = "";
+
+    acaoAtual.bloqueadoPor = jogadorDecidindo;
+    htmlGerado = `
+        <h3><strong>BLOQUEIO</strong></h3>
+        <p><strong class="nameStrong">${statusPlayers[nplayerAtual].nome}</strong> está usando ${acaoAtual.tipo.replaceAll("_", " ")}, <strong class="nameStrong">${statusPlayers[jogadorDecidindo].nome}</strong> deseja bloquear</p>
+
+        <button class="buttonPassar" onclick="passarDecisaoBloqueio()">Passar</button>
+        <button onclick="marcarQuemDuvidou()">Bloquear</button>
+    `;
+    divResolverAcao.innerHTML = htmlGerado;
+}
+function passarDecisaoBloqueio() {
+    jogadorDecidindo = (jogadorDecidindo + 1) % nplayers;
+    if(statusPlayers[jogadorDecidindo].vivo === false) passarDecisaoBloqueio();
+
+    if(jogadorDecidindo === nplayerAtual) {
+        executarAcao(acaoAtual.tipo);
+    }
+    else decidirQuemBloqueou();
+}
+
+function marcarQuemDuvidou() {
+    acaoAtual.bloqueadoPor = jogadorDecidindo;
+    infoAcaoAtual.carta = -1;
+    escolherRespostaAcao(infoAcaoAtual);
 }
 
 function acao(action) {
@@ -228,17 +282,35 @@ function acao(action) {
                 jogador: nplayerAtual,
                 alvo: null,
                 bloqueavel: true,
-                bloqueadoPor: 3
+                bloqueadoPor: null
             };
-            resolverAcao()
+            escolherRespostaAcao({
+                jogador: nplayerAtual,
+                jogada: "ajuda_externa",
+                carta: null
+            })
             break;
 
         case "golpe":
+            acaoAtual = {
+                tipo: "golpe",
+                jogador: nplayerAtual,
+                alvo: alvo,
+                bloqueavel: false,
+                bloqueadoPor: null
+            };
             golpeDeEstado();
             break;
 
         case "taxar":
-            abrirDuvida({
+            acaoAtual = {
+                tipo: "taxar",
+                jogador: nplayerAtual,
+                alvo: null,
+                bloqueavel: false,
+                bloqueadoPor: null
+            };
+            escolherRespostaAcao({
                 jogador: nplayerAtual,
                 jogada: "taxar",
                 carta: 3
@@ -246,7 +318,18 @@ function acao(action) {
             break;
 
         case "roubar":
-            abrirDuvida({
+            if(alvo === null) {
+                alert("Escolha uma pessoa para roubar");
+                return;
+            }  
+            acaoAtual = {
+                tipo: "roubar",
+                jogador: nplayerAtual,
+                alvo: alvo,
+                bloqueavel: true,
+                bloqueadoPor: null
+            };
+            escolherRespostaAcao({
                 jogador: nplayerAtual,
                 jogada: "roubar",
                 carta: 4
@@ -254,7 +337,14 @@ function acao(action) {
             break;
 
         case "trocar":
-            abrirDuvida({
+            acaoAtual = {
+                tipo: "trocar",
+                jogador: nplayerAtual,
+                alvo: null,
+                bloqueavel: false,
+                bloqueadoPor: null
+            };
+            escolherRespostaAcao({
                 jogador: nplayerAtual,
                 jogada: "trocar",
                 carta: 5
@@ -265,8 +355,15 @@ function acao(action) {
             if(alvo === null) {
                 alert("Escolha uma pessoa para matar");
                 return;
-            }   
-            abrirDuvida({
+            }
+            acaoAtual = {
+                tipo: "assassinar",
+                jogador: nplayerAtual,
+                alvo: alvo,
+                bloqueavel: true,
+                bloqueadoPor: null
+            };
+            escolherRespostaAcao({
                 jogador: nplayerAtual,
                 jogada: "assassinar",
                 carta: 1
@@ -279,7 +376,14 @@ function acao(action) {
 }
 
 function executarAcao(action) {
+    areaResolverAcao.classList.add("escondido")
+
+    let saveAlvo = alvo;
     switch(action) {
+        case "ajuda_externa":
+            ajudaExterna();
+            break;
+
         case "taxar":
             duque();
             break;
@@ -299,13 +403,69 @@ function executarAcao(action) {
         default:
             break;
     }
+    if(canExecutar) {
+        canExecutar = false;
+        alvo = saveAlvo;
+        colocarCartasNaTela()
+    }
 }
 
-function abrirDuvida(info) {
+let areaResolverAcao = document.querySelector(".fundoResolverAcao");
+let divResolverAcao = document.querySelector(".resolverAcao");
+
+let infoAcaoAtual = null;
+function escolherRespostaAcao(info) {
+
+    infoAcaoAtual = info;
+    const Passar = infoAcaoAtual.jogada;
+    let htmlGerado = "";
+
+    htmlGerado += `<h3><strong>ESCOLHER AÇÃO</strong></h3>`;
+    if(acaoAtual.bloqueadoPor === null) htmlGerado += `<p><strong class="nameStrong">${statusPlayers[nplayerAtual].nome}</strong> usou <strong class="actionStrong">${acaoAtual.tipo.replaceAll("_", " ")}</strong></p>`;
+    else htmlGerado += `<p><strong class="nameStrong">${statusPlayers[acaoAtual.bloqueadoPor].nome}</strong> bloqueou <strong class="actionStrong">${acaoAtual.tipo.replaceAll("_", " ")}</strong> de <strong class="nameStrong">${statusPlayers[nplayerAtual].nome}</strong></p>`;
+
+    if(infoAcaoAtual.carta === -1 ) {
+        htmlGerado += `
+            <p>Alguem deseja <strong>DUVIDAR</strong> do <strong>BLOQUEIO</strong> de <strong class="nameStrong">${statusPlayers[acaoAtual.bloqueadoPor].nome}</strong></p>
+            <button class="buttonPassar" onclick="passarRodada()">Passar</button>
+            <button class="buttonDuvida" onclick="abrirDuvida()">Duvidar</button>
+        `;
+        divResolverAcao.innerHTML = htmlGerado;
+        return;
+    }
+
+    if(infoAcaoAtual.carta !== null && acaoAtual.bloqueavel) htmlGerado += `<p>Alguem deseja <strong>DUVIDAR</strong> ou <strong>BLOQUEAR</strong></p>`;
+    if(infoAcaoAtual.carta !== null && !acaoAtual.bloqueavel) htmlGerado += `<p>Alguem deseja <strong>DUVIDAR</strong></p>`;
+    if(infoAcaoAtual.carta === null && acaoAtual.bloqueavel) htmlGerado += `<p>Alguem deseja <strong>BLOQUEAR</strong></p>`;
+
+    htmlGerado += `<button class="buttonPassar" onclick="executarAcao('${Passar}')">Passar</button>`;
+
+    if(infoAcaoAtual.carta !== null) htmlGerado += `<button class="buttonDuvida" onclick="abrirDuvida()">Duvidar</button>`;
+
+    if(acaoAtual.bloqueavel) htmlGerado += `<button onclick="bloquear()">Bloquear</button>`;
+
+    
+    divResolverAcao.innerHTML = htmlGerado;
+    areaResolverAcao.classList.remove("escondido");
+}
+
+
+function abrirDuvida() {
+    if(infoAcaoAtual === null) {
+        return
+        alert("infoAcaoAtual está null");
+    }
+
+    let info =  infoAcaoAtual;
+
+    areaResolverAcao.classList.add("escondido");
     duvidaAtual = info;
     jogadorDecidindo = (info.jogador + 1) % nplayers;
+    jogadorDecidindoBloqueio = (acaoAtual.bloqueadoPor + 1) % nplayers;
     areaDuvida.classList.remove("escondido");
-    proximoDecisor();
+
+    if(tipoDeDuvida === 1) proximoDecisor();
+    else proximoDecisorBloqueio();
 }
 
 let areaDuvida = document.querySelector(".fundoDuvida");
@@ -315,7 +475,7 @@ function proximoDecisor() {
     const duvidaText = document.querySelector(".duvidaText");
 
     duvidaText.innerHTML = `
-        <strong class="nameStrong">${statusPlayers[duvidaAtual.jogador].nome}</strong> usou <strong class="actionStrong">${duvidaAtual.jogada}</strong>
+        <strong class="nameStrong">${statusPlayers[duvidaAtual.jogador].nome}</strong> usou <strong class="actionStrong">${duvidaAtual.jogada.replaceAll("_", " ")}</strong>
         <br>
         <strong class="nameStrong">${statusPlayers[jogadorDecidindo].nome}</strong>, deseja dúvidar?
     `;
@@ -323,20 +483,65 @@ function proximoDecisor() {
     console.log(duvidaText.textContent);
 }
 
+function proximoDecisorBloqueio() {
+    if(jogadorDecidindoBloqueio === acaoAtual.bloqueadoPor) return;
+    
+    const duvidaText = document.querySelector(".duvidaText");
+
+    duvidaText.innerHTML = `
+        <strong class="nameStrong">${statusPlayers[acaoAtual.bloqueadoPor].nome}</strong> bloqueou <strong class="actionStrong">${duvidaAtual.jogada.replaceAll("_", " ")}</strong>
+        <br>
+        <strong class="nameStrong">${statusPlayers[jogadorDecidindoBloqueio].nome}</strong>, deseja dúvidar?
+    `;
+    console.log(duvidaText.innerHTML);
+    console.log(duvidaText.textContent);
+}
+
+
 function passarDuvida() {
     jogadorDecidindo = (jogadorDecidindo + 1) % nplayers;
+    jogadorDecidindoBloqueio = (jogadorDecidindoBloqueio + 1) % nplayers;
+    if((statusPlayers[jogadorDecidindo].vivo === false && tipoDeDuvida === 1) || (statusPlayers[jogadorDecidindoBloqueio].vivo === false && tipoDeDuvida === 2)) passarDuvida();
 
-    if(jogadorDecidindo === duvidaAtual.jogador) {
+    if(jogadorDecidindoBloqueio === acaoAtual.bloqueadoPor && tipoDeDuvida === 2) {
+        passarRodada();
         areaDuvida.classList.add("escondido");
-        executarAcao(duvidaAtual.jogada);
+    }
+    else if(jogadorDecidindo === duvidaAtual.jogador && tipoDeDuvida === 1) {
+        areaDuvida.classList.add("escondido");
+        if(tipoDeDuvida !== 2)executarAcao(duvidaAtual.jogada);
+        else passarRodada();
+        tipoDeDuvida = 1;
     }
     else {
-        proximoDecisor();
+        if(tipoDeDuvida === 1) proximoDecisor();
+        else proximoDecisorBloqueio();
     }
 }
 
+let canExecutar = false;
 function duvidar() {
-    if(statusPlayers[duvidaAtual.jogador].cartas.indexOf(String(duvidaAtual.carta)) !== -1) {
+    if(tipoDeDuvida === 2) {
+        const cartas = regrasDeBlock[acaoAtual.tipo];
+
+        const possuiCarta = cartas.some(carta =>
+            statusPlayers[acaoAtual.bloqueadoPor].cartas.includes(String(carta))
+        );
+        if(possuiCarta) {
+            alvo = jogadorDecidindoBloqueio;
+            areaDuvida.classList.add("escondido");
+            colocarCartasNaTela();
+        }
+        else {
+            alvo = acaoAtual.bloqueadoPor;
+            areaDuvida.classList.add("escondido");
+            canExecutar = true;
+
+            colocarCartasNaTela();
+            return;
+        }
+    }
+    else if(statusPlayers[duvidaAtual.jogador].cartas.indexOf(String(duvidaAtual.carta)) !== -1) {
         alvo = jogadorDecidindo;
         areaDuvida.classList.add("escondido");
         colocarCartasNaTela();
@@ -346,21 +551,24 @@ function duvidar() {
         areaDuvida.classList.add("escondido");
         colocarCartasNaTela();
     }
+    tipoDeDuvida = 1;
 }
 
 function passarRodada() {
+    areaResolverAcao.classList.add("escondido");
     alvo = null;
     while(true) {
         nplayerAtual = (nplayerAtual + 1) % nplayers;
         if(statusPlayers[nplayerAtual].vivo === true) break;
     }
     
+    tipoDeDuvida = 1;
     renderGame()
 }
 
 function overCoins() {
     if(statusPlayers[nplayerAtual].moedas >= 10) {
-        alert("Você está com muitas moedas")
+        alert("Você está com muitas moedas e é obrigado a dar um golpe")
         return true;
     }
     return false;
@@ -558,7 +766,8 @@ function matar(indiceCarta) {
     alvo = null;
 
     toggleViewCard();
-    passarRodada();
+    if(tipoDeDuvida !== 2) passarRodada();
+    else renderGame();
 }
 
 function rodada() {
