@@ -14,7 +14,10 @@ let playersEl = document.getElementById("Nplayers");
 const nome = document.getElementById("nome");
 let linhaEl = document.querySelector(".linha");
 let action = document.querySelector(".painel-acoes");
-
+let infoDaRodada = document.querySelector(".infoDaRodada");
+let header = document.querySelector("header");
+let rodadaAtual = 1;
+let overLayMaior = document.querySelector(".overLayMaior")
 
 playersEl.addEventListener("input", () => {
     nome.innerHTML = "";
@@ -72,9 +75,16 @@ function startGame() {
         });
     }
     
+    infoDaRodada.innerHTML = `
+        <p>🎲 RODADA ${rodadaAtual}</p>
+        <p>👤VEZ DE ${statusPlayers[0].nome}</p>
+        <p>🃏CARTAS RESTANTES ${deck.length - statusPlayers.length * 2}</p>
+    `;
     escolhasContainer.classList.add("escondido");
+    header.classList.remove("escondido");
     linhaEl.classList.add("escondido");
     gameTable.classList.remove("escondido");
+    showCardButton.classList.remove("escondido")
     renderGame();
     const playerIni = statusPlayers[0].nome;
 }
@@ -88,6 +98,7 @@ function renderGame() {
     let htmlGerado = "";
     gameTable.innerHTML = "";
     showCardButton.classList.remove("escondido");
+    blurCard.classList.add("escondido");
 
     statusPlayers.forEach((player, index) => {
         let imgs = "";
@@ -118,6 +129,11 @@ function renderGame() {
             document.querySelector(`[data-player="${i}"]`).querySelectorAll("h3")[1].innerHTML = "Morto"
         }
     }
+    infoDaRodada.innerHTML = `
+        <p>🎲 RODADA ${rodadaAtual}</p>
+        <p>👤VEZ DE ${statusPlayers[nplayerAtual].nome}</p>
+        <p>🃏CARTAS RESTANTES ${deck.length - statusPlayers.length * 2}</p>
+    `;
 }
 
 let alvo = null;
@@ -447,6 +463,7 @@ function escolherRespostaAcao(info) {
     
     divResolverAcao.innerHTML = htmlGerado;
     areaResolverAcao.classList.remove("escondido");
+    overLayMaior.classList.remove("escondido")
 }
 
 
@@ -563,6 +580,7 @@ function passarRodada() {
     }
     
     tipoDeDuvida = 1;
+    rodadaAtual++;
     renderGame()
 }
 
