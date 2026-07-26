@@ -372,10 +372,6 @@ h3 {
     text-align: center;
 }
 
-.escondido {
-    display: none;
-}
-
 #nome {
     text-align: center;
     display: grid;
@@ -542,4 +538,23 @@ h3 {
     transform: translateY(-4px);
     background-color: rgb(216, 86, 63, 0.40);
     box-shadow: 0 0 22px rgb(216, 86, 63, 0.55);
+}
+
+.informacoes {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+
+    background-color: #090e20;
+    border-radius: 20px;
+    padding: 10px;
+    box-shadow: 0 0 15px white;
+    z-index: 1005;
+}
+
+.escondido {
+    display: none;
 }

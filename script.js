@@ -110,6 +110,8 @@ function startGame() {
     showCardButton.classList.remove("escondido")
     renderGame();
     const playerIni = statusPlayers[0].nome;
+    action.classList.add("escondido");
+    mostrarCartasDeTodos();
 }
 
 let nplayerAtual = 0;
@@ -165,8 +167,6 @@ function clicouPlayer(index) {
     if(!statusPlayers[index].vivo) return;
     console.log(index);
 
-
-
     if(document.querySelector(`[data-player="${index}"]`).classList.contains("marcado")) {
         document.querySelector(`[data-player="${index}"]`).classList.remove("marcado");
         alvo = null;
@@ -190,6 +190,8 @@ let jogadorDecidindo = 0;
 
 let blurCard = document.querySelector(".overLay");
 function mostrarCartas() {
+    
+    informacoesPainel.style.zIndex = "0";
     blurCard.classList.remove("escondido");
     let card = document.querySelector(".card");
     card.classList.add("privateCards");
@@ -201,6 +203,16 @@ function mostrarCartas() {
     });
 }
 
+function esconderCartas() {
+    informacoesPainel.style.zIndex = "1005";
+    blurCard.classList.add("escondido");
+    let card = document.querySelector(".card");
+    card.classList.remove("privateCards");
+    
+    card.querySelectorAll("img").forEach(carta => {
+        carta.src = backCard;
+    });
+}
 
 let showCardButton = document.querySelector(".showCard");
 showCardButton.addEventListener("mousedown", mostrarCartas);
@@ -212,30 +224,24 @@ let informacoesPainel = document.querySelector(".informacoes");
 function mostrarCartasDeTodos() {
     htmlGerado = `
         <div>
-            <h3>${(nplayerAtual + 1) % nplayers === 0? "Finalizar" : `Passe o celular para <strong class="nameStrong">${statusPlayers[nplayerAtual + 1].nome}`}</strong></h3>
-            <button onclick="proximoAver()">Passar vez</button>
+            <p><strong>Veja suas cartas</strong></p>
+            <p>${(nplayerAtual + 1) % nplayers === 0? "" : `Passe o celular para <strong class="nameStrong">${statusPlayers[nplayerAtual + 1].nome}`}</strong><p>
+            <button onclick="proximoAver()">${(nplayerAtual + 1) % nplayers === 0? "Começar jogo" : "Passar vez"}</button>
         </div>
     `;
-    areaResolverAcao.classList.remove("escondido");
-    divResolverAcao.innerHTML = htmlGerado;
-}
-
-function esconderCartas() {
-    blurCard.classList.add("escondido");
-    let card = document.querySelector(".card");
-    card.classList.remove("privateCards");
-    
-    card.querySelectorAll("img").forEach(carta => {
-        carta.src = backCard;
-    });
+    informacoesPainel.classList.remove("escondido");
+    informacoesPainel.innerHTML = htmlGerado;
 }
 
 
 function proximoAver() {
     passarRodada();
+    rodadaAtual = 1;
     if(nplayerAtual === 0) {
         informacoesPainel.classList.add("escondido");
+        action.classList.remove("escondido");
         renderGame();
+        return;
     }
     mostrarCartasDeTodos();
 }
