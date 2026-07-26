@@ -56,25 +56,21 @@
             </div>
         </header>
 
-        <div class="conteudo">
-            <div class="container escondido"></div>
-            
+        <div class="container escondido"></div>
+        
+        <div class="fundoDuvida escondido">
+            <div class="duvida">
+                <h3><strong>DÚVIDA</strong>❗</h3>
 
-            <div class="fundoDuvida escondido">
-                <div class="duvida">
-                    <h3><strong>DÚVIDA</strong>❗</h3>
-
-                    <p class="duvidaText"></p>
-                    <button class="buttonPassar" onclick="passarDuvida()">Passar vez</button>
-                    <button class="buttonDuvida" onclick="duvidar()">Dúvidar</button>
-                </div>
-            </div>
-
-            <div class="fundoResolverAcao escondido">
-                <div class="resolverAcao"></div>
+                <p class="duvidaText"></p>
+                <button class="buttonPassar" onclick="passarDuvida()">Passar vez</button>
+                <button class="buttonDuvida" onclick="duvidar()">Dúvidar</button>
             </div>
         </div>
 
+        <div class="fundoResolverAcao escondido">
+            <div class="resolverAcao"></div>
+        </div>
         
 
         
@@ -85,9 +81,9 @@
             <div class="acoesCard tipoAcao">
                 <h3>Ações de Personagem</h3>
                 <div class="action">
-                    <button class="bPersonagem" onclick="acao('taxar')">Taxar</button>
-                    <button class="bPersonagem" onclick="acao('assassinar')">Assassinar</button>
-                    <button class="bPersonagem" onclick="acao('trocar')">Trocar</button>
+                    <button class="bPersonagem botaoDoGolpe" onclick="acao('taxar')">Taxar</button>
+                    <button class="bPersonagem botaoDoGolpe" onclick="acao('assassinar')">Assassinar</button>
+                    <button class="bPersonagem botaoDaRenda" onclick="acao('trocar')">Trocar</button>
                     <button class="bPersonagem" onclick="acao('roubar')">Roubar</button>
                 </div>
             </div>
@@ -97,9 +93,9 @@
             <div class="acoesGerais tipoAcao">
                 <h3>Ações Gerais</h3>
                 <div class="action">
-                    <button class="bGeral" onclick="acao('renda')">Renda</button>
-                    <button class="bGeral" onclick="acao('ajuda_externa')">Ajuda Externa</button>
-                    <button class="bGeral" onclick="acao('golpe')">Golpe</button>
+                    <button class="bGeral botaoDaAjuda" onclick="acao('renda')">Renda</button>
+                    <button class="bGeral botaoDaAjuda" onclick="acao('ajuda_externa')">Ajuda Externa</button>
+                    <button class="bGeral botaoDoGolpe" onclick="acao('golpe')">Golpe</button>
                 </div>
             </div>
         </div>

@@ -60,21 +60,18 @@ main {
     flex: 1;
     width: 100%;
 
-    display: grid;
+    /*display: grid;
 
     grid-template-areas: 
         "header"
         "conteudo"
         "actions";
-    grid-template-rows: auto 1fr auto;
-}
-.conteudo {
-    grid-area: conteudo;
+    grid-template-rows: auto 1fr auto;*/
 
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
-
-
 
 h1 {
     font-size: 130px;
@@ -121,14 +118,12 @@ h1 {
 
 .painel-acoes {
     grid-area: actions;
-    position: absolute;
-    bottom: 10px;
     z-index: 1;
 
     width: 90%;
     margin: auto;
     margin-top: 40px;
-    padding: Card25px;
+    padding: 5px;
     border-radius: 28px;
     background: rgba(10, 15, 35, 0.75);
     border: 2px solid rgba(0, 180, 255, 0.2);
@@ -164,7 +159,14 @@ h1 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 35px;
+    margin: auto auto;
+    align-items: stretch;
     margin-top: 30px;
+    padding: 10px;
+    
+    border-radius: 15px;
+    border: 2px solid rgba(0, 180, 255, 0.2);
+    box-shadow: 0 0 30px rgba(0,102,255,0.3);
 }
 
 /*.container {
@@ -291,19 +293,25 @@ strong {
 
 .fundoDuvida, .fundoResolverAcao {
     position: absolute;
-    width: 105vw;
-    height: 105vh;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    z-index: 1002;
 }
 .duvida, .resolverAcao {
     background-color: #090e20;
     border-radius: 20px;
     padding: 10px;
     box-shadow: 0 0 15px white;
+}
+
+#fundos {
+    background-color: rgb(5, 31, 56);
+    z-index: 1010;
+    position: fixed;
+    top: 50%;
 }
 
 .coin {
@@ -462,11 +470,9 @@ h3 {
 
 .marcado {
     border: 3px solid red;
-    transform: translateY(-8px) scale(1.05);
     box-shadow: 0 0 22px rgba(225, 42, 21, 0.881);
 }
 .marcado:hover {
-    transform: translateY(-8px) scale(1.05);
     box-shadow: 0 0 22px rgba(225, 42, 21, 0.881);
 }
 
@@ -504,9 +510,36 @@ h3 {
 .morto {
     background-color: #EF4444;
     border: none;
-    transform: scale(1.);
+    border-radius: 15px;
 }
 
 .duvidaText {
     font-family: Arial, sans-serif;
+}
+
+.botaoDaAjuda {
+    border: solid 2px rgb(249, 253, 3);
+}
+.botaoDaAjuda:hover {
+    transform: translateY(-4px);
+    background-color: rgba(227, 230, 39, 0.40);
+    box-shadow: 0 0 22px rgba(185, 177, 62, 0.55);
+}
+
+.botaoDaRenda {
+    border: solid 2px rgb(2, 255, 44);
+}
+.botaoDaRenda:hover {
+    transform: translateY(-4px);
+    background-color: rgb(17, 165, 42, 0.40);
+    box-shadow: 0 0 22px rgb(17, 165, 42, 0.55);
+}
+
+.botaoDoGolpe {
+    border: solid 2px rgb(255, 38, 0);
+}
+.botaoDoGolpe:hover {
+    transform: translateY(-4px);
+    background-color: rgb(216, 86, 63, 0.40);
+    box-shadow: 0 0 22px rgb(216, 86, 63, 0.55);
 }
